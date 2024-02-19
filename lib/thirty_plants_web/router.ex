@@ -8,6 +8,7 @@ defmodule ThirtyPlantsWeb.Router do
     plug :put_root_layout, html: {ThirtyPlantsWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug LiveViewNative.SessionPlug
   end
 
   pipeline :api do
@@ -17,7 +18,8 @@ defmodule ThirtyPlantsWeb.Router do
   scope "/", ThirtyPlantsWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", HomeLive
   end
 
   # Other scopes may use custom stacks.
