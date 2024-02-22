@@ -20,6 +20,7 @@ defmodule ThirtyPlantsWeb.Router do
 
     # get "/", PageController, :home
     live "/", HomeLive
+    live "/add", AddLive
   end
 
   # Other scopes may use custom stacks.
