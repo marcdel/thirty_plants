@@ -2,10 +2,13 @@ defmodule ThirtyPlantsWeb.HomeLive do
   use ThirtyPlantsWeb, :live_view
   use ThirtyPlantsWeb.HomeLiveStyles
 
+  alias ThirtyPlants.Accounts
+
   @impl true
   def mount(params, _session, socket) do
-    count = Map.get(params, "count", 0)
-    {:ok, assign(socket, count: count)}
+    email = Map.get(params, "email", 0)
+    user = Accounts.get_user_by_email(email)
+    {:ok, assign(socket, email: email, user: user, count: 0)}
   end
 
   @impl true
@@ -29,6 +32,7 @@ defmodule ThirtyPlantsWeb.HomeLive do
     ~SWIFTUI"""
     <VStack class="px-10">
       <Text>
+        <%= @user.email %>
         <%= @count %>/30 Plants
       </Text>
       <NavigationLink destination="/add"><Text>Add</Text></NavigationLink>

@@ -21,8 +21,9 @@ defmodule ThirtyPlantsWeb.Router do
   scope "/", ThirtyPlantsWeb do
     pipe_through :browser
 
-    # get "/", PageController, :home
-    live "/", HomeLive
+    get "/", PageController, :home
+    live "/home", HomeLive
+    live "/fake_login", FakeLoginLive
     live "/add", AddLive
   end
 

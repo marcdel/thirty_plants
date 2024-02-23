@@ -63,7 +63,7 @@ defmodule ThirtyPlantsWeb.AddLive do
   @impl true
   def handle_event("save", _params, socket) do
     count = Enum.filter(socket.assigns.plants, & &1.selected) |> length()
-    {:noreply, push_navigate(socket, to: "/?count=#{count}")}
+    {:noreply, push_navigate(socket, to: "/home?count=#{count}")}
   end
 
   defp get_items do
