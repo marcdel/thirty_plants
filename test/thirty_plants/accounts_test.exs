@@ -1,5 +1,5 @@
 defmodule ThirtyPlants.AccountsTest do
-  use ThirtyPlants.DataCase
+  use ThirtyPlants.DataCase, async: true
 
   alias ThirtyPlants.Accounts
 
