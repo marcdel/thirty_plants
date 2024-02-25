@@ -3,8 +3,8 @@ defmodule ThirtyPlants.Log.WeekPlant do
   import Ecto.Changeset
 
   schema "week_plants" do
-    field :week_id, :id
-    field :plant_id, :id
+    belongs_to :week, ThirtyPlants.Log.Week
+    belongs_to :plant, ThirtyPlants.Log.Plant
 
     timestamps(type: :utc_datetime)
   end

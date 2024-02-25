@@ -135,6 +135,26 @@ defmodule ThirtyPlants.Log do
   def get_week!(id), do: Repo.get!(Week, id)
 
   @doc """
+  Returns the current week for a user.
+
+  ## Examples
+
+      iex> current_week(user)
+      %Week{}
+
+      iex> current_week(user)
+      nil
+  """
+  def current_week(user) do
+    from(w in Week, where: w.user_id == ^user.id, order_by: [desc: :start_date], limit: 1)
+    |> Repo.one()
+    |> case do
+      nil -> {:error, nil}
+      week -> {:ok, week}
+    end
+  end
+
+  @doc """
   Creates a week.
 
   ## Examples
@@ -148,11 +168,14 @@ defmodule ThirtyPlants.Log do
   """
   def create_week(%User{} = user, attrs \\ %{}) do
     attrs =
-      Map.merge(attrs, %{
-        user_id: user.id,
-        start_date: Date.utc_today(),
-        end_date: Date.add(Date.utc_today(), 7)
-      })
+      Map.merge(
+        %{
+          user_id: user.id,
+          start_date: Date.utc_today(),
+          end_date: Date.add(Date.utc_today(), 7)
+        },
+        attrs
+      )
 
     %Week{}
     |> Week.changeset(attrs)
@@ -191,16 +214,22 @@ defmodule ThirtyPlants.Log do
   alias ThirtyPlants.Log.WeekPlant
 
   @doc """
-  Returns the list of week_plants.
+  Returns the list of plants for a week.
 
   ## Examples
 
       iex> list_week_plants()
-      [%WeekPlant{}, ...]
+      [%Plant{}, ...]
 
   """
-  def list_week_plants do
-    Repo.all(WeekPlant)
+  def list_week_plants(%{id: week_id}) do
+    Repo.all(
+      from p in Plant,
+        join: wp in WeekPlant,
+        on: wp.plant_id == p.id,
+        where: wp.week_id == ^week_id,
+        select: p
+    )
   end
 
   @doc """
@@ -238,6 +267,22 @@ defmodule ThirtyPlants.Log do
   end
 
   @doc """
+  Adds a plant to a week.
+
+  ## Examples
+
+      iex> add_plant_to_week(week, plant)
+      {:ok, %WeekPlant{}}
+
+      iex> add_plant_to_week(week, plant)
+      {:error, %Ecto.Changeset{}}
+  """
+  def add_plant_to_week(week, plant) do
+    attrs = %{week_id: week && week.id, plant_id: plant && plant.id}
+    create_week_plant(attrs)
+  end
+
+  @doc """
   Deletes a week_plant.
 
   ## Examples
@@ -254,15 +299,34 @@ defmodule ThirtyPlants.Log do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking week_plant changes.
+  Removes a plant from a week.
 
   ## Examples
 
-      iex> change_week_plant(week_plant)
-      %Ecto.Changeset{data: %WeekPlant{}}
+      iex> remove_plant_from_week(week, plant)
+      {:ok, nil}
 
+      iex> remove_plant_from_week(week, plant)
+      {:error, nil}
   """
-  def change_week_plant(%WeekPlant{} = week_plant, attrs \\ %{}) do
-    WeekPlant.changeset(week_plant, attrs)
+  def remove_plant_from_week(week, plant) when is_nil(week) or is_nil(plant) do
+    {:error, nil}
+  end
+
+  def remove_plant_from_week(%{id: week_id}, %{id: plant_id})
+      when is_nil(week_id) or is_nil(plant_id) do
+    {:error, nil}
+  end
+
+  def remove_plant_from_week(%{id: week_id}, %{id: plant_id}) do
+    Repo.delete_all(
+      from wp in WeekPlant,
+        where: wp.week_id == ^week_id and wp.plant_id == ^plant_id
+    )
+    |> case do
+      # There should only ever be one match, anything else is an error
+      {1, _} -> {:ok, nil}
+      _ -> {:error, nil}
+    end
   end
 end

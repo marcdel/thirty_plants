@@ -80,6 +80,21 @@ defmodule ThirtyPlants.LogTest do
       assert Log.get_week!(week.id) == week
     end
 
+    test "current_week/1 returns the current week for the given user", %{user: user} do
+      assert {:error, nil} = Log.current_week(user)
+
+      attrs = %{
+        start_date: Date.add(Date.utc_today(), -7),
+        end_date: Date.utc_today()
+      }
+
+      assert {:ok, old_week} = Log.create_week(user, attrs)
+      assert {:ok, ^old_week} = Log.current_week(user)
+
+      assert {:ok, current_week} = Log.create_week(user)
+      assert {:ok, ^current_week} = Log.current_week(user)
+    end
+
     test "create_week/1 with valid data creates a week", %{user: user} do
       start_date = Date.utc_today()
       end_date = Date.add(start_date, 7)
@@ -113,8 +128,8 @@ defmodule ThirtyPlants.LogTest do
     @invalid_attrs %{}
 
     test "list_week_plants/0 returns all week_plants" do
-      week_plant = week_plant_fixture()
-      assert Log.list_week_plants() == [week_plant]
+      %{week_id: week_id, plant_id: plant_id} = week_plant_fixture()
+      assert [%{id: ^plant_id}] = Log.list_week_plants(%{id: week_id})
     end
 
     test "get_week_plant!/1 returns the week_plant with given id" do
@@ -138,15 +153,38 @@ defmodule ThirtyPlants.LogTest do
       assert {:error, %Ecto.Changeset{}} = Log.create_week_plant(@invalid_attrs)
     end
 
+    test "add_plant_to_week/2 adds a plant to the given week" do
+      week = week_fixture()
+      plant = plant_fixture()
+
+      assert {:ok, week_plant} = Log.add_plant_to_week(week, plant)
+
+      assert week_plant.week_id == week.id
+      assert week_plant.plant_id == plant.id
+    end
+
+    test "add_plant_to_week/2 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Log.add_plant_to_week(nil, nil)
+    end
+
     test "delete_week_plant/1 deletes the week_plant" do
       week_plant = week_plant_fixture()
       assert {:ok, %WeekPlant{}} = Log.delete_week_plant(week_plant)
       assert_raise Ecto.NoResultsError, fn -> Log.get_week_plant!(week_plant.id) end
     end
 
-    test "change_week_plant/1 returns a week_plant changeset" do
-      week_plant = week_plant_fixture()
-      assert %Ecto.Changeset{} = Log.change_week_plant(week_plant)
+    test "remove_plant_from_week/2 adds a plant to the given week" do
+      week = week_fixture()
+      plant = plant_fixture()
+      assert {:ok, _} = Log.add_plant_to_week(week, plant)
+
+      assert {:ok, _} = Log.remove_plant_from_week(week, plant)
+
+      assert [] = Log.list_week_plants(week)
+    end
+
+    test "remove_plant_from_week/2 with invalid data returns error changeset" do
+      assert {:error, _} = Log.remove_plant_from_week(nil, nil)
     end
   end
 end
