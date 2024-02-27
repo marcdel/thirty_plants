@@ -4,8 +4,8 @@ defmodule ThirtyPlants.Log do
   """
 
   import Ecto.Query, warn: false
-  alias ThirtyPlants.Repo
 
+  alias ThirtyPlants.Repo
   alias ThirtyPlants.Log.Plant
 
   @doc """
@@ -89,34 +89,8 @@ defmodule ThirtyPlants.Log do
     Repo.delete(plant)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking plant changes.
-
-  ## Examples
-
-      iex> change_plant(plant)
-      %Ecto.Changeset{data: %Plant{}}
-
-  """
-  def change_plant(%Plant{} = plant, attrs \\ %{}) do
-    Plant.changeset(plant, attrs)
-  end
-
   alias ThirtyPlants.Log.Week
   alias ThirtyPlants.Accounts.User
-
-  @doc """
-  Returns the list of weeks.
-
-  ## Examples
-
-      iex> list_weeks()
-      [%Week{}, ...]
-
-  """
-  def list_weeks do
-    Repo.all(Week)
-  end
 
   @doc """
   Gets a single week.
@@ -207,19 +181,6 @@ defmodule ThirtyPlants.Log do
     Repo.delete(week)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking week changes.
-
-  ## Examples
-
-      iex> change_week(week)
-      %Ecto.Changeset{data: %Week{}}
-
-  """
-  def change_week(%Week{} = week, attrs \\ %{}) do
-    Week.changeset(week, attrs)
-  end
-
   alias ThirtyPlants.Log.WeekPlant
 
   @doc """
@@ -240,22 +201,6 @@ defmodule ThirtyPlants.Log do
         select: p
     )
   end
-
-  @doc """
-  Gets a single week_plant.
-
-  Raises `Ecto.NoResultsError` if the Week plant does not exist.
-
-  ## Examples
-
-      iex> get_week_plant!(123)
-      %WeekPlant{}
-
-      iex> get_week_plant!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_week_plant!(id), do: Repo.get!(WeekPlant, id)
 
   @doc """
   Creates a week_plant.
@@ -289,22 +234,6 @@ defmodule ThirtyPlants.Log do
   def add_plant_to_week(week, plant) do
     attrs = %{week_id: week && week.id, plant_id: plant && plant.id}
     create_week_plant(attrs)
-  end
-
-  @doc """
-  Deletes a week_plant.
-
-  ## Examples
-
-      iex> delete_week_plant(week_plant)
-      {:ok, %WeekPlant{}}
-
-      iex> delete_week_plant(week_plant)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_week_plant(%WeekPlant{} = week_plant) do
-    Repo.delete(week_plant)
   end
 
   @doc """

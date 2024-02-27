@@ -50,11 +50,6 @@ defmodule ThirtyPlants.LogTest do
       assert {:ok, %Plant{}} = Log.delete_plant(plant)
       assert_raise Ecto.NoResultsError, fn -> Log.get_plant!(plant.id) end
     end
-
-    test "change_plant/1 returns a plant changeset" do
-      plant = plant_fixture()
-      assert %Ecto.Changeset{} = Log.change_plant(plant)
-    end
   end
 
   describe "weeks" do
@@ -68,11 +63,6 @@ defmodule ThirtyPlants.LogTest do
 
     setup do
       %{user: user_fixture()}
-    end
-
-    test "list_weeks/0 returns all weeks" do
-      week = week_fixture()
-      assert Log.list_weeks() == [week]
     end
 
     test "get_week!/1 returns the week with given id" do
@@ -113,11 +103,6 @@ defmodule ThirtyPlants.LogTest do
       assert {:ok, %Week{}} = Log.delete_week(week)
       assert_raise Ecto.NoResultsError, fn -> Log.get_week!(week.id) end
     end
-
-    test "change_week/1 returns a week changeset" do
-      week = week_fixture()
-      assert %Ecto.Changeset{} = Log.change_week(week)
-    end
   end
 
   describe "week_plants" do
@@ -130,11 +115,6 @@ defmodule ThirtyPlants.LogTest do
     test "list_week_plants/0 returns all week_plants" do
       %{week_id: week_id, plant_id: plant_id} = week_plant_fixture()
       assert [%{id: ^plant_id}] = Log.list_week_plants(%{id: week_id})
-    end
-
-    test "get_week_plant!/1 returns the week_plant with given id" do
-      week_plant = week_plant_fixture()
-      assert Log.get_week_plant!(week_plant.id) == week_plant
     end
 
     test "create_week_plant/1 with valid data creates a week_plant" do
@@ -165,12 +145,6 @@ defmodule ThirtyPlants.LogTest do
 
     test "add_plant_to_week/2 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Log.add_plant_to_week(nil, nil)
-    end
-
-    test "delete_week_plant/1 deletes the week_plant" do
-      week_plant = week_plant_fixture()
-      assert {:ok, %WeekPlant{}} = Log.delete_week_plant(week_plant)
-      assert_raise Ecto.NoResultsError, fn -> Log.get_week_plant!(week_plant.id) end
     end
 
     test "remove_plant_from_week/2 adds a plant to the given week" do
