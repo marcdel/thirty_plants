@@ -46,6 +46,18 @@ defmodule ThirtyPlants do
   end
 
   @doc """
+  Returns the number of plants for the current week for the given user.
+
+  ## Examples
+
+      iex> plant_count(user)
+      3
+  """
+  def plant_count(user) do
+    current_plants(user) |> length()
+  end
+
+  @doc """
   Removes a plant from the current week for the given user.
 
   ## Examples

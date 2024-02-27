@@ -13,6 +13,10 @@ defmodule ThirtyPlantsWeb.AppStyles do
   "input" do
     textFieldStyle(.roundedBorder)
   end
+
+  "button-primary" do
+    buttonStyle(.borderedProminent)
+  end
   """
 
   def class(_, _), do: {:unmatched, []}

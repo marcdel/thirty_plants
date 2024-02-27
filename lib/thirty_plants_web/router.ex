@@ -22,9 +22,10 @@ defmodule ThirtyPlantsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/home", HomeLive
     live "/fake_login", FakeLoginLive
-    live "/add", AddLive
+    live "/weeks/new", NewWeekLive
+    live "/weeks/current", CurrentWeekLive
+    live "/weeks/summary", WeekSummaryLive
   end
 
   # Other scopes may use custom stacks.

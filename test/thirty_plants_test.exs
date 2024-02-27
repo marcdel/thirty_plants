@@ -58,6 +58,20 @@ defmodule ThirtyPlantsTest do
     end
   end
 
+  describe "plant_count/1" do
+    test "counts all plants for the current week for the given user", %{user: user} do
+      {:ok, _} = ThirtyPlants.start_week(user)
+
+      {:ok, tater} = ThirtyPlants.Log.create_plant(%{name: "po-tay-to"})
+      {:ok, tomato} = ThirtyPlants.Log.create_plant(%{name: "to-mah-to"})
+
+      {:ok, _} = ThirtyPlants.add_plant(user, tater)
+      {:ok, _} = ThirtyPlants.add_plant(user, tomato)
+
+      assert ThirtyPlants.plant_count(user) == 2
+    end
+  end
+
   describe "remove_plant/2" do
     test "removes the specified plant from the current week for the given user", %{
       user: user,

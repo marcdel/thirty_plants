@@ -146,11 +146,20 @@ defmodule ThirtyPlants.Log do
       nil
   """
   def current_week(user) do
+    today = Date.utc_today()
+
     from(w in Week, where: w.user_id == ^user.id, order_by: [desc: :start_date], limit: 1)
     |> Repo.one()
     |> case do
-      nil -> {:error, nil}
-      week -> {:ok, week}
+      nil ->
+        {:error, nil}
+
+      week ->
+        case Date.compare(week.end_date, today) do
+          :lt -> {:error, week}
+          :eq -> {:error, week}
+          :gt -> {:ok, week}
+        end
     end
   end
 

@@ -89,7 +89,7 @@ defmodule ThirtyPlants.LogTest do
       }
 
       assert {:ok, old_week} = Log.create_week(user, attrs)
-      assert {:ok, ^old_week} = Log.current_week(user)
+      assert {:error, ^old_week} = Log.current_week(user)
 
       assert {:ok, current_week} = Log.create_week(user)
       assert {:ok, ^current_week} = Log.current_week(user)
